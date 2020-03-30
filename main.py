@@ -1,5 +1,5 @@
 # by David MAREK / 30.03.2020
-# install pymongo
+# pip install pymongo
 import pymongo
 
 # PROMĚNNÉ
@@ -22,7 +22,7 @@ def cipher_text(text, pwd):
     heslo se pak prodlouží na délku textu funkcí generate_pwd()
     každé písmeno pak textu pak projde úpravou a zapíše se do výsledné šifry
     """
-    pwd = generate_pwd(PWD, len(TEXT))
+    pwd = generate_pwd(pwd, len(text))
     cipher = ""
 
     for i, ch in enumerate(text):
@@ -41,7 +41,7 @@ def cipher_text(text, pwd):
 
 
 def decipher_text(cipher, pwd):
-    pwd = generate_pwd(PWD, len(TEXT))
+    pwd = generate_pwd(pwd, len(cipher))
     text = ""
 
     for i, ch in enumerate(cipher):
@@ -60,13 +60,13 @@ def decipher_text(cipher, pwd):
 
 
 # Původní text od uživatele
-TEXT = input("Zadej text, který chceš zašifrovat:").lower()
+TEXT = input("Zadej text, který chceš zašifrovat: ").lower()
 # Heslo od uživatele
-PWD = input("Zvol si heslo pro zašifrování:")
+PWD = input("Zvol si heslo pro zašifrování: ")
 # Heslo prodloužené na délku textu
 PWD_EXT = generate_pwd(PWD, len(TEXT))
 
-print(f"Váš původní text je: {TEXT}")
+print(f"\nVáš původní text je: {TEXT}")
 print(f"Vaše heslo je: {PWD_EXT}")
 
 # Zašifrovaný text pomocí hesla
@@ -82,6 +82,18 @@ db = client[DBNAME]
 # VYBRÁNÍ KOLEKCE
 col = db[COLNAME]
 
+# Přidání do DB
+col.insert_one({
+    "text": TEXT,
+    "pwd": PWD,
+    "crypted": CIPHER
+})
 
-TEXT = decipher_text(CIPHER, PWD)
-print(f"Dešifrovaný text je: {TEXT}")
+# Vypsání posledního záznamu
+last_data = col.find()[col.count_documents({})-1]
+print(f"\nVýpis z databáze:\n\n{last_data}\n")
+
+# Dešifrování zapsaných dat
+DECRYPTED_TEXT = decipher_text(
+    last_data["crypted"], last_data["pwd"])
+print(f"Dešifrovaný text je: {DECRYPTED_TEXT}\n")
