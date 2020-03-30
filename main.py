@@ -9,10 +9,12 @@ def generate_pwd(original, length):
 
 
 def cipher_text(text, pwd):
-    text = text.lower()
-    print("Váš původní text je: " + text)
-    pwd = generate_pwd(pwd, len(text))
-    print("Vaše heslo je: " + pwd)
+    """
+    Funkce příjme text, a heslo - např. text=python & heslo=abc
+    heslo se pak prodlouží na délku textu funkcí generate_pwd()
+    každé písmeno pak textu pak projde úpravou a zapíše se do výsledné šifry
+    """
+    pwd = generate_pwd(PWD, len(TEXT))
     cipher = ""
 
     for i, ch in enumerate(text):
@@ -34,7 +36,12 @@ def decipher_text(cipher, pwd):
     pass
 
 
-TEXT = input("Zadej text, který chceš zašifrovat:")
+TEXT = input("Zadej text, který chceš zašifrovat:").lower()
 PWD = input("Zvol si heslo pro zašifrování:")
 
-print(cipher_text(TEXT, PWD))
+PWD_EXT = generate_pwd(PWD, len(TEXT))
+
+print(f"Váš původní text je: {TEXT}")
+print(f"Vaše heslo je: {PWD_EXT}")
+
+print("Zašifrovaný text je: " + cipher_text(TEXT, PWD_EXT))
